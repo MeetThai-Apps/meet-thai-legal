@@ -1,0 +1,921 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="index,follow">
+  <title>Meet Thai Jobs – Account Deletion</title>
+  <style>
+    :root {
+      color-scheme: light;
+      font-family: Arial, Helvetica, sans-serif;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      background: #fff5f9;
+      color: #29212a;
+      line-height: 1.6;
+    }
+    main {
+      width: min(100% - 32px, 650px);
+      margin: 48px auto;
+      padding: 32px;
+      background: white;
+      border-radius: 18px;
+      box-shadow: 0 8px 30px #7e36501a;
+    }
+    h1 { color: #b51f68; margin-top: 0; }
+    h2 { font-size: 1.15rem; }
+    .brand {
+      color: #b51f68;
+      font-weight: bold;
+      letter-spacing: 1px;
+      margin-bottom: 16px;
+    }
+    label {
+      display: block;
+      font-weight: bold;
+      margin: 18px 0 6px;
+    }
+    input, textarea, select {
+      width: 100%;
+      padding: 12px;
+      border: 1px solid #c8bbc4;
+      border-radius: 8px;
+      font: inherit;
+      background: white;
+      color: #29212a;
+    }
+    textarea { min-height: 110px; resize: vertical; }
+    button {
+      width: 100%;
+      margin-top: 22px;
+      padding: 14px;
+      border: 0;
+      border-radius: 8px;
+      background: #b51f68;
+      color: white;
+      font: inherit;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    button:disabled {
+      background: #a9a2a7;
+      cursor: not-allowed;
+    }
+    .notice {
+      padding: 15px;
+      background: #fff1db;
+      border-left: 4px solid #d49b35;
+      border-radius: 5px;
+      margin: 20px 0;
+    }
+    .status { margin-top: 16px; }
+    .status:empty { display: none; }
+    .honeypot {
+      position: absolute;
+      left: -10000px;
+      width: 1px;
+      height: 1px;
+      overflow: hidden;
+    }
+    footer { margin-top: 30px; font-size: .9rem; }
+    a { color: #a41460; }
+    @media (max-width: 480px) {
+      main { margin: 16px auto; padding: 22px; }
+    }
+  </style>
+</head>
+<body>
+<main>
+  <div class="brand">MEET THAI JOBS</div>
+
+  <label for="language" id="languageLabel">Language</label>
+  <select id="language">
+    <option value="en">English</option>
+    <option value="de">Deutsch</option>
+    <option value="th">ไทย</option>
+    <option value="fr">Français</option>
+    <option value="es">Español</option>
+    <option value="it">Italiano</option>
+    <option value="pt">Português</option>
+    <option value="nl">Nederlands</option>
+    <option value="pl">Polski</option>
+    <option value="cs">Čeština</option>
+    <option value="sk">Slovenčina</option>
+    <option value="hu">Magyar</option>
+    <option value="ro">Română</option>
+    <option value="bg">Български</option>
+    <option value="el">Ελληνικά</option>
+    <option value="tr">Türkçe</option>
+    <option value="ru">Русский</option>
+    <option value="uk">Українська</option>
+    <option value="sv">Svenska</option>
+    <option value="da">Dansk</option>
+    <option value="no">Norsk</option>
+    <option value="fi">Suomi</option>
+    <option value="et">Eesti</option>
+    <option value="lv">Latviešu</option>
+    <option value="lt">Lietuvių</option>
+    <option value="hr">Hrvatski</option>
+    <option value="sl">Slovenščina</option>
+    <option value="sr">Српски</option>
+    <option value="ar">العربية</option>
+    <option value="hi">हिन्दी</option>
+    <option value="id">Bahasa Indonesia</option>
+    <option value="vi">Tiếng Việt</option>
+    <option value="zh">中文</option>
+    <option value="ja">日本語</option>
+    <option value="ko">한국어</option>
+  </select>
+
+  <h1 id="title">Request account deletion</h1>
+  <p id="intro">
+    You can request the deletion of your Meet Thai Jobs account
+    and associated personal data.
+  </p>
+
+  <div class="notice" id="notice">
+    Submitting a request does not immediately delete an account.
+    We must verify your identity before processing the deletion.
+  </div>
+
+  <h2 id="heading">Deletion request</h2>
+
+  <form id="deletionForm">
+    <label for="email" id="emailLabel">Account email address</label>
+    <input
+      type="email"
+      id="email"
+      name="email"
+      maxlength="254"
+      autocomplete="email"
+      required
+    >
+
+    <label for="reason" id="reasonLabel">
+      Reason (optional)
+    </label>
+    <textarea
+      id="reason"
+      name="reason"
+      maxlength="1000"
+    ></textarea>
+
+    <div class="honeypot" aria-hidden="true">
+      <label for="website">Website</label>
+      <input
+        type="text"
+        id="website"
+        name="website"
+        tabindex="-1"
+        autocomplete="off"
+      >
+    </div>
+
+    <button type="submit" id="submitButton" disabled>
+      Request deletion
+    </button>
+  </form>
+
+  <div id="status" class="status" role="status" aria-live="polite"></div>
+
+  <p id="alternative">
+    If you can still access your account, you can use the
+    account deletion function inside the Meet Thai Jobs app.
+  </p>
+
+  <footer>
+    <a id="privacyLink" href="./privacy.html?lang=en">
+      Privacy Policy
+    </a>
+  </footer>
+</main>
+
+<script>
+"use strict";
+
+const SUBMISSION_ENABLED = false;
+
+const ENDPOINT =
+  "https://uadztbxbvdchpqyinfvq.supabase.co" +
+  "/functions/v1/request-account-deletion";
+
+const translations = {
+  en: [
+    "Language",
+    "Request account deletion",
+    "You can request the deletion of your Meet Thai Jobs account and associated personal data.",
+    "Submitting a request does not immediately delete an account. We must verify your identity before processing the deletion.",
+    "Deletion request",
+    "Account email address",
+    "Reason (optional)",
+    "Request deletion",
+    "If you can still access your account, you can use the account deletion function inside the Meet Thai Jobs app.",
+    "Privacy Policy",
+    "The public request form is not yet available.",
+    "Submitting your request...",
+    "Your request has been received. Identity verification is required before deletion.",
+    "Your request could not be submitted. Please try again later.",
+    "Too many requests. Please try again later."
+  ],
+  de: [
+    "Sprache",
+    "Kontolöschung beantragen",
+    "Hier kannst du die Löschung deines Meet Thai Jobs-Kontos und der damit verbundenen personenbezogenen Daten beantragen.",
+    "Das Absenden eines Antrags führt nicht zur sofortigen Kontolöschung. Vor der Bearbeitung müssen wir deine Identität überprüfen.",
+    "Löschantrag",
+    "E-Mail-Adresse des Kontos",
+    "Begründung (freiwillig)",
+    "Löschung beantragen",
+    "Wenn du noch Zugriff auf dein Konto hast, kannst du die Kontolöschung direkt in der Meet Thai Jobs App durchführen.",
+    "Datenschutzerklärung",
+    "Das öffentliche Antragsformular ist noch nicht freigeschaltet.",
+    "Dein Antrag wird übermittelt...",
+    "Dein Antrag wurde entgegengenommen. Vor der Löschung ist eine Identitätsprüfung erforderlich.",
+    "Dein Antrag konnte nicht übermittelt werden. Bitte versuche es später erneut.",
+    "Zu viele Anfragen. Bitte versuche es später erneut."
+  ],
+  th: [
+    "ภาษา",
+    "ขอลบบัญชี",
+    "คุณสามารถขอลบบัญชี Meet Thai Jobs และข้อมูลส่วนบุคคลที่เกี่ยวข้องได้",
+    "การส่งคำขอไม่ได้ทำให้บัญชีถูกลบทันที เราต้องตรวจสอบตัวตนของคุณก่อนดำเนินการ",
+    "คำขอลบบัญชี",
+    "อีเมลของบัญชี",
+    "เหตุผล (ไม่บังคับ)",
+    "ส่งคำขอลบบัญชี",
+    "หากคุณยังเข้าถึงบัญชีได้ คุณสามารถลบบัญชีผ่านแอป Meet Thai Jobs",
+    "นโยบายความเป็นส่วนตัว",
+    "แบบฟอร์มคำขอสาธารณะยังไม่เปิดใช้งาน",
+    "กำลังส่งคำขอ...",
+    "ได้รับคำขอแล้ว ต้องตรวจสอบตัวตนก่อนลบบัญชี",
+    "ไม่สามารถส่งคำขอได้ โปรดลองอีกครั้งภายหลัง",
+    "มีคำขอมากเกินไป โปรดลองอีกครั้งภายหลัง"
+  ],
+  fr: [
+    "Langue",
+    "Demander la suppression du compte",
+    "Vous pouvez demander la suppression de votre compte Meet Thai Jobs et des données personnelles associées.",
+    "L'envoi d'une demande ne supprime pas immédiatement le compte. Nous devons vérifier votre identité avant toute suppression.",
+    "Demande de suppression",
+    "Adresse e-mail du compte",
+    "Motif (facultatif)",
+    "Demander la suppression",
+    "Si vous avez encore accès à votre compte, utilisez la fonction de suppression dans l'application Meet Thai Jobs.",
+    "Politique de confidentialité",
+    "Le formulaire public n'est pas encore disponible.",
+    "Envoi de votre demande...",
+    "Votre demande a été reçue. Une vérification d'identité est nécessaire avant la suppression.",
+    "Impossible d'envoyer la demande. Veuillez réessayer plus tard.",
+    "Trop de demandes. Veuillez réessayer plus tard."
+  ],
+  es: [
+    "Idioma",
+    "Solicitar eliminación de cuenta",
+    "Puedes solicitar la eliminación de tu cuenta de Meet Thai Jobs y los datos personales asociados.",
+    "Enviar una solicitud no elimina la cuenta inmediatamente. Debemos verificar tu identidad antes de eliminarla.",
+    "Solicitud de eliminación",
+    "Correo electrónico de la cuenta",
+    "Motivo (opcional)",
+    "Solicitar eliminación",
+    "Si todavía puedes acceder a tu cuenta, utiliza la función de eliminación dentro de la aplicación Meet Thai Jobs.",
+    "Política de privacidad",
+    "El formulario público todavía no está disponible.",
+    "Enviando solicitud...",
+    "Hemos recibido tu solicitud. Debemos verificar tu identidad antes de eliminar la cuenta.",
+    "No se pudo enviar la solicitud. Inténtalo más tarde.",
+    "Demasiadas solicitudes. Inténtalo más tarde."
+  ],
+  it: [
+    "Lingua",
+    "Richiedi eliminazione account",
+    "Puoi richiedere l'eliminazione del tuo account Meet Thai Jobs e dei dati personali associati.",
+    "L'invio della richiesta non elimina immediatamente l'account. Dobbiamo verificare la tua identità prima dell'eliminazione.",
+    "Richiesta di eliminazione",
+    "Email dell'account",
+    "Motivo (facoltativo)",
+    "Richiedi eliminazione",
+    "Se puoi ancora accedere al tuo account, usa la funzione di eliminazione nell'app Meet Thai Jobs.",
+    "Informativa sulla privacy",
+    "Il modulo pubblico non è ancora disponibile.",
+    "Invio della richiesta...",
+    "Richiesta ricevuta. È necessaria la verifica dell'identità prima dell'eliminazione.",
+    "Impossibile inviare la richiesta. Riprova più tardi.",
+    "Troppe richieste. Riprova più tardi."
+  ],
+  pt: [
+    "Idioma",
+    "Solicitar exclusão da conta",
+    "Você pode solicitar a exclusão da sua conta Meet Thai Jobs e dos dados pessoais associados.",
+    "Enviar uma solicitação não exclui a conta imediatamente. Precisamos verificar sua identidade antes da exclusão.",
+    "Solicitação de exclusão",
+    "E-mail da conta",
+    "Motivo (opcional)",
+    "Solicitar exclusão",
+    "Se ainda tiver acesso à sua conta, use a função de exclusão no aplicativo Meet Thai Jobs.",
+    "Política de Privacidade",
+    "O formulário público ainda não está disponível.",
+    "Enviando solicitação...",
+    "Solicitação recebida. É necessário verificar sua identidade antes da exclusão.",
+    "Não foi possível enviar a solicitação. Tente novamente mais tarde.",
+    "Muitas solicitações. Tente novamente mais tarde."
+  ],
+  nl: [
+    "Taal",
+    "Accountverwijdering aanvragen",
+    "Je kunt verwijdering van je Meet Thai Jobs-account en bijbehorende persoonsgegevens aanvragen.",
+    "Een aanvraag verwijdert je account niet onmiddellijk. We moeten eerst je identiteit controleren.",
+    "Verwijderingsverzoek",
+    "E-mailadres van account",
+    "Reden (optioneel)",
+    "Verwijdering aanvragen",
+    "Als je nog toegang hebt tot je account, kun je dit verwijderen in de Meet Thai Jobs-app.",
+    "Privacybeleid",
+    "Het openbare formulier is nog niet beschikbaar.",
+    "Verzoek verzenden...",
+    "Je verzoek is ontvangen. Identiteitscontrole is vereist vóór verwijdering.",
+    "Verzenden mislukt. Probeer het later opnieuw.",
+    "Te veel verzoeken. Probeer het later opnieuw."
+  ],
+  pl: [
+    "Język",
+    "Wniosek o usunięcie konta",
+    "Możesz poprosić o usunięcie konta Meet Thai Jobs i powiązanych danych osobowych.",
+    "Wysłanie wniosku nie usuwa konta od razu. Najpierw musimy zweryfikować Twoją tożsamość.",
+    "Wniosek o usunięcie",
+    "Adres e-mail konta",
+    "Powód (opcjonalnie)",
+    "Wyślij wniosek",
+    "Jeśli nadal masz dostęp do konta, możesz usunąć je w aplikacji Meet Thai Jobs.",
+    "Polityka prywatności",
+    "Formularz publiczny nie jest jeszcze dostępny.",
+    "Wysyłanie wniosku...",
+    "Wniosek otrzymano. Przed usunięciem wymagana jest weryfikacja tożsamości.",
+    "Nie udało się wysłać wniosku. Spróbuj ponownie później.",
+    "Zbyt wiele żądań. Spróbuj później."
+  ],
+  cs: [
+    "Jazyk",
+    "Požádat o smazání účtu",
+    "Můžete požádat o smazání účtu Meet Thai Jobs a souvisejících osobních údajů.",
+    "Odeslání žádosti účet okamžitě nesmaže. Nejprve musíme ověřit vaši totožnost.",
+    "Žádost o smazání",
+    "E-mailová adresa účtu",
+    "Důvod (nepovinné)",
+    "Odeslat žádost",
+    "Pokud máte stále přístup k účtu, můžete jej smazat v aplikaci Meet Thai Jobs.",
+    "Zásady ochrany osobních údajů",
+    "Veřejný formulář zatím není dostupný.",
+    "Odesílání žádosti...",
+    "Žádost byla přijata. Před smazáním je nutné ověřit totožnost.",
+    "Žádost nelze odeslat. Zkuste to později.",
+    "Příliš mnoho žádostí. Zkuste to později."
+  ],
+  sk: [
+    "Jazyk",
+    "Požiadať o vymazanie účtu",
+    "Môžete požiadať o vymazanie účtu Meet Thai Jobs a súvisiacich osobných údajov.",
+    "Odoslanie žiadosti účet okamžite nevymaže. Najprv musíme overiť vašu totožnosť.",
+    "Žiadosť o vymazanie",
+    "E-mailová adresa účtu",
+    "Dôvod (nepovinné)",
+    "Odoslať žiadosť",
+    "Ak máte stále prístup k účtu, môžete ho vymazať v aplikácii Meet Thai Jobs.",
+    "Zásady ochrany súkromia",
+    "Verejný formulár zatiaľ nie je dostupný.",
+    "Odosielanie žiadosti...",
+    "Žiadosť bola prijatá. Pred vymazaním je potrebné overiť totožnosť.",
+    "Žiadosť sa nepodarilo odoslať. Skúste to neskôr.",
+    "Príliš veľa žiadostí. Skúste to neskôr."
+  ],
+  hu: [
+    "Nyelv",
+    "Fióktörlés kérése",
+    "Kérheti Meet Thai Jobs-fiókja és a kapcsolódó személyes adatok törlését.",
+    "A kérelem elküldése nem törli azonnal a fiókot. Előbb ellenőriznünk kell a személyazonosságát.",
+    "Törlési kérelem",
+    "A fiók e-mail-címe",
+    "Indok (nem kötelező)",
+    "Törlés kérése",
+    "Ha még hozzáfér a fiókjához, törölheti azt a Meet Thai Jobs alkalmazásban.",
+    "Adatvédelmi szabályzat",
+    "A nyilvános űrlap még nem érhető el.",
+    "Kérelem küldése...",
+    "Kérelmét megkaptuk. Törlés előtt személyazonosság-ellenőrzés szükséges.",
+    "A kérelmet nem sikerült elküldeni. Próbálja újra később.",
+    "Túl sok kérelem. Próbálja újra később."
+  ],
+  ro: [
+    "Limbă",
+    "Solicită ștergerea contului",
+    "Poți solicita ștergerea contului Meet Thai Jobs și a datelor personale asociate.",
+    "Trimiterea cererii nu șterge imediat contul. Trebuie să îți verificăm identitatea înainte de ștergere.",
+    "Cerere de ștergere",
+    "Adresa de e-mail a contului",
+    "Motiv (opțional)",
+    "Solicită ștergerea",
+    "Dacă încă ai acces la cont, îl poți șterge din aplicația Meet Thai Jobs.",
+    "Politica de confidențialitate",
+    "Formularul public nu este încă disponibil.",
+    "Se trimite cererea...",
+    "Cererea a fost primită. Este necesară verificarea identității înainte de ștergere.",
+    "Cererea nu a putut fi trimisă. Încearcă mai târziu.",
+    "Prea multe cereri. Încearcă mai târziu."
+  ],
+  bg: [
+    "Език",
+    "Заявка за изтриване на акаунт",
+    "Можете да заявите изтриване на акаунта си в Meet Thai Jobs и свързаните лични данни.",
+    "Изпращането на заявка не изтрива акаунта веднага. Първо трябва да потвърдим самоличността ви.",
+    "Заявка за изтриване",
+    "Имейл адрес на акаунта",
+    "Причина (по избор)",
+    "Изпрати заявка",
+    "Ако все още имате достъп до акаунта, можете да го изтриете в приложението Meet Thai Jobs.",
+    "Политика за поверителност",
+    "Публичният формуляр все още не е достъпен.",
+    "Изпращане...",
+    "Заявката е получена. Преди изтриването е необходима проверка на самоличността.",
+    "Заявката не можа да бъде изпратена. Опитайте по-късно.",
+    "Твърде много заявки. Опитайте по-късно."
+  ],
+  el: [
+    "Γλώσσα",
+    "Αίτημα διαγραφής λογαριασμού",
+    "Μπορείτε να ζητήσετε τη διαγραφή του λογαριασμού σας στο Meet Thai Jobs και των σχετικών προσωπικών δεδομένων.",
+    "Η υποβολή αιτήματος δεν διαγράφει αμέσως τον λογαριασμό. Πρέπει πρώτα να επαληθεύσουμε την ταυτότητά σας.",
+    "Αίτημα διαγραφής",
+    "Email λογαριασμού",
+    "Αιτία (προαιρετικά)",
+    "Υποβολή αιτήματος",
+    "Αν έχετε ακόμη πρόσβαση, μπορείτε να διαγράψετε τον λογαριασμό μέσα από την εφαρμογή Meet Thai Jobs.",
+    "Πολιτική απορρήτου",
+    "Η δημόσια φόρμα δεν είναι ακόμη διαθέσιμη.",
+    "Αποστολή αιτήματος...",
+    "Το αίτημα ελήφθη. Απαιτείται επαλήθευση ταυτότητας πριν από τη διαγραφή.",
+    "Δεν ήταν δυνατή η αποστολή. Δοκιμάστε ξανά αργότερα.",
+    "Πάρα πολλά αιτήματα. Δοκιμάστε αργότερα."
+  ],
+  tr: [
+    "Dil",
+    "Hesap silme talebi",
+    "Meet Thai Jobs hesabınızın ve ilgili kişisel verilerinizin silinmesini talep edebilirsiniz.",
+    "Talep göndermek hesabı hemen silmez. Silmeden önce kimliğinizi doğrulamamız gerekir.",
+    "Silme talebi",
+    "Hesabın e-posta adresi",
+    "Neden (isteğe bağlı)",
+    "Silme talebi gönder",
+    "Hesabınıza hâlâ erişebiliyorsanız Meet Thai Jobs uygulamasından hesabınızı silebilirsiniz.",
+    "Gizlilik Politikası",
+    "Herkese açık form henüz kullanılamıyor.",
+    "Talep gönderiliyor...",
+    "Talebiniz alındı. Silme öncesinde kimlik doğrulaması gereklidir.",
+    "Talep gönderilemedi. Lütfen daha sonra tekrar deneyin.",
+    "Çok fazla talep. Lütfen daha sonra tekrar deneyin."
+  ],
+  ru: [
+    "Язык",
+    "Запрос на удаление аккаунта",
+    "Вы можете запросить удаление аккаунта Meet Thai Jobs и связанных персональных данных.",
+    "Отправка запроса не удаляет аккаунт немедленно. Сначала необходимо подтвердить вашу личность.",
+    "Запрос на удаление",
+    "Электронная почта аккаунта",
+    "Причина (необязательно)",
+    "Отправить запрос",
+    "Если у вас ещё есть доступ к аккаунту, вы можете удалить его в приложении Meet Thai Jobs.",
+    "Политика конфиденциальности",
+    "Публичная форма пока недоступна.",
+    "Отправка запроса...",
+    "Запрос получен. Перед удалением необходимо подтвердить личность.",
+    "Не удалось отправить запрос. Повторите попытку позже.",
+    "Слишком много запросов. Повторите позже."
+  ],
+  uk: [
+    "Мова",
+    "Запит на видалення облікового запису",
+    "Ви можете подати запит на видалення облікового запису Meet Thai Jobs і пов’язаних персональних даних.",
+    "Надсилання запиту не видаляє обліковий запис негайно. Спочатку потрібно підтвердити вашу особу.",
+    "Запит на видалення",
+    "Електронна пошта облікового запису",
+    "Причина (необов’язково)",
+    "Надіслати запит",
+    "Якщо ви ще маєте доступ до облікового запису, його можна видалити в застосунку Meet Thai Jobs.",
+    "Політика конфіденційності",
+    "Публічна форма поки недоступна.",
+    "Надсилання запиту...",
+    "Запит отримано. Перед видаленням потрібно підтвердити особу.",
+    "Не вдалося надіслати запит. Спробуйте пізніше.",
+    "Забагато запитів. Спробуйте пізніше."
+  ],
+  sv: [
+    "Språk",
+    "Begär borttagning av konto",
+    "Du kan begära att ditt Meet Thai Jobs-konto och tillhörande personuppgifter tas bort.",
+    "En begäran tar inte bort kontot omedelbart. Vi måste först verifiera din identitet.",
+    "Begäran om borttagning",
+    "Kontots e-postadress",
+    "Anledning (valfritt)",
+    "Begär borttagning",
+    "Om du fortfarande har tillgång till kontot kan du ta bort det i Meet Thai Jobs-appen.",
+    "Integritetspolicy",
+    "Det offentliga formuläret är ännu inte tillgängligt.",
+    "Skickar begäran...",
+    "Din begäran har tagits emot. Identiteten måste verifieras före borttagning.",
+    "Begäran kunde inte skickas. Försök igen senare.",
+    "För många förfrågningar. Försök senare."
+  ],
+  da: [
+    "Sprog",
+    "Anmod om sletning af konto",
+    "Du kan anmode om sletning af din Meet Thai Jobs-konto og tilknyttede personoplysninger.",
+    "En anmodning sletter ikke kontoen med det samme. Vi skal først bekræfte din identitet.",
+    "Anmodning om sletning",
+    "Kontoens e-mailadresse",
+    "Årsag (valgfri)",
+    "Anmod om sletning",
+    "Hvis du stadig har adgang til kontoen, kan du slette den i Meet Thai Jobs-appen.",
+    "Privatlivspolitik",
+    "Den offentlige formular er endnu ikke tilgængelig.",
+    "Sender anmodning...",
+    "Din anmodning er modtaget. Identiteten skal bekræftes før sletning.",
+    "Anmodningen kunne ikke sendes. Prøv igen senere.",
+    "For mange anmodninger. Prøv igen senere."
+  ],
+  no: [
+    "Språk",
+    "Be om sletting av konto",
+    "Du kan be om sletting av Meet Thai Jobs-kontoen din og tilknyttede personopplysninger.",
+    "En forespørsel sletter ikke kontoen umiddelbart. Vi må først bekrefte identiteten din.",
+    "Forespørsel om sletting",
+    "E-postadresse for kontoen",
+    "Årsak (valgfritt)",
+    "Be om sletting",
+    "Hvis du fortsatt har tilgang til kontoen, kan du slette den i Meet Thai Jobs-appen.",
+    "Personvernerklæring",
+    "Det offentlige skjemaet er ikke tilgjengelig ennå.",
+    "Sender forespørsel...",
+    "Forespørselen er mottatt. Identiteten må bekreftes før sletting.",
+    "Kunne ikke sende forespørselen. Prøv igjen senere.",
+    "For mange forespørsler. Prøv igjen senere."
+  ],
+  fi: [
+    "Kieli",
+    "Pyydä tilin poistamista",
+    "Voit pyytää Meet Thai Jobs -tilisi ja siihen liittyvien henkilötietojen poistamista.",
+    "Pyynnön lähettäminen ei poista tiliä heti. Henkilöllisyytesi on vahvistettava ennen poistamista.",
+    "Poistopyyntö",
+    "Tilin sähköpostiosoite",
+    "Syy (valinnainen)",
+    "Lähetä poistopyyntö",
+    "Jos pääset vielä tilillesi, voit poistaa sen Meet Thai Jobs -sovelluksessa.",
+    "Tietosuojakäytäntö",
+    "Julkinen lomake ei ole vielä käytettävissä.",
+    "Lähetetään pyyntöä...",
+    "Pyyntö vastaanotettu. Henkilöllisyys on vahvistettava ennen poistamista.",
+    "Pyyntöä ei voitu lähettää. Yritä myöhemmin uudelleen.",
+    "Liian monta pyyntöä. Yritä myöhemmin."
+  ],
+  et: [
+    "Keel",
+    "Taotle konto kustutamist",
+    "Saate taotleda oma Meet Thai Jobsi konto ja seotud isikuandmete kustutamist.",
+    "Taotluse esitamine ei kustuta kontot kohe. Enne kustutamist peame teie isiku tuvastama.",
+    "Kustutamistaotlus",
+    "Konto e-posti aadress",
+    "Põhjus (valikuline)",
+    "Esita taotlus",
+    "Kui pääsete endiselt oma kontole ligi, saate selle Meet Thai Jobsi rakenduses kustutada.",
+    "Privaatsuspoliitika",
+    "Avalik vorm pole veel saadaval.",
+    "Taotluse saatmine...",
+    "Taotlus on vastu võetud. Enne kustutamist tuleb isik tuvastada.",
+    "Taotlust ei saanud saata. Proovige hiljem uuesti.",
+    "Liiga palju taotlusi. Proovige hiljem."
+  ],
+  lv: [
+    "Valoda",
+    "Pieprasīt konta dzēšanu",
+    "Varat pieprasīt sava Meet Thai Jobs konta un saistīto personas datu dzēšanu.",
+    "Pieprasījuma iesniegšana kontu uzreiz neizdzēš. Vispirms jāpārbauda jūsu identitāte.",
+    "Dzēšanas pieprasījums",
+    "Konta e-pasta adrese",
+    "Iemesls (neobligāti)",
+    "Iesniegt pieprasījumu",
+    "Ja jums joprojām ir piekļuve kontam, varat to dzēst lietotnē Meet Thai Jobs.",
+    "Privātuma politika",
+    "Publiskā veidlapa vēl nav pieejama.",
+    "Pieprasījuma nosūtīšana...",
+    "Pieprasījums saņemts. Pirms dzēšanas nepieciešama identitātes pārbaude.",
+    "Pieprasījumu neizdevās nosūtīt. Mēģiniet vēlāk.",
+    "Pārāk daudz pieprasījumu. Mēģiniet vēlāk."
+  ],
+  lt: [
+    "Kalba",
+    "Prašyti ištrinti paskyrą",
+    "Galite prašyti ištrinti savo Meet Thai Jobs paskyrą ir susijusius asmens duomenis.",
+    "Prašymo pateikimas paskyros iš karto neištrina. Pirmiausia turime patikrinti jūsų tapatybę.",
+    "Ištrynimo prašymas",
+    "Paskyros el. pašto adresas",
+    "Priežastis (nebūtina)",
+    "Pateikti prašymą",
+    "Jei vis dar galite prisijungti, paskyrą galite ištrinti Meet Thai Jobs programėlėje.",
+    "Privatumo politika",
+    "Vieša forma dar nepasiekiama.",
+    "Siunčiamas prašymas...",
+    "Prašymas gautas. Prieš ištrinant būtina patikrinti tapatybę.",
+    "Nepavyko išsiųsti prašymo. Bandykite vėliau.",
+    "Per daug prašymų. Bandykite vėliau."
+  ],
+  hr: [
+    "Jezik",
+    "Zatraži brisanje računa",
+    "Možete zatražiti brisanje svog Meet Thai Jobs računa i povezanih osobnih podataka.",
+    "Slanje zahtjeva ne briše račun odmah. Prije brisanja moramo potvrditi vaš identitet.",
+    "Zahtjev za brisanje",
+    "E-adresa računa",
+    "Razlog (neobavezno)",
+    "Pošalji zahtjev",
+    "Ako još imate pristup računu, možete ga izbrisati u aplikaciji Meet Thai Jobs.",
+    "Pravila privatnosti",
+    "Javni obrazac još nije dostupan.",
+    "Slanje zahtjeva...",
+    "Zahtjev je zaprimljen. Prije brisanja potrebna je provjera identiteta.",
+    "Zahtjev nije moguće poslati. Pokušajte kasnije.",
+    "Previše zahtjeva. Pokušajte kasnije."
+  ],
+  sl: [
+    "Jezik",
+    "Zahteva za izbris računa",
+    "Zahtevate lahko izbris računa Meet Thai Jobs in povezanih osebnih podatkov.",
+    "Oddaja zahteve računa ne izbriše takoj. Pred izbrisom moramo preveriti vašo identiteto.",
+    "Zahteva za izbris",
+    "E-poštni naslov računa",
+    "Razlog (neobvezno)",
+    "Pošlji zahtevo",
+    "Če imate še dostop do računa, ga lahko izbrišete v aplikaciji Meet Thai Jobs.",
+    "Pravilnik o zasebnosti",
+    "Javni obrazec še ni na voljo.",
+    "Pošiljanje zahteve...",
+    "Zahteva je prejeta. Pred izbrisom je potrebno preverjanje identitete.",
+    "Zahteve ni bilo mogoče poslati. Poskusite pozneje.",
+    "Preveč zahtev. Poskusite pozneje."
+  ],
+  sr: [
+    "Језик",
+    "Захтев за брисање налога",
+    "Можете затражити брисање свог Meet Thai Jobs налога и повезаних личних података.",
+    "Слање захтева не брише налог одмах. Пре брисања морамо проверити ваш идентитет.",
+    "Захтев за брисање",
+    "Имејл адреса налога",
+    "Разлог (необавезно)",
+    "Пошаљи захтев",
+    "Ако и даље имате приступ налогу, можете га обрисати у апликацији Meet Thai Jobs.",
+    "Политика приватности",
+    "Јавни образац још није доступан.",
+    "Слање захтева...",
+    "Захтев је примљен. Пре брисања потребна је провера идентитета.",
+    "Захтев није могуће послати. Покушајте касније.",
+    "Превише захтева. Покушајте касније."
+  ],
+  ar: [
+    "اللغة",
+    "طلب حذف الحساب",
+    "يمكنك طلب حذف حسابك في Meet Thai Jobs والبيانات الشخصية المرتبطة به.",
+    "إرسال الطلب لا يحذف الحساب فوراً. يجب التحقق من هويتك قبل الحذف.",
+    "طلب الحذف",
+    "البريد الإلكتروني للحساب",
+    "السبب (اختياري)",
+    "إرسال طلب الحذف",
+    "إذا كنت لا تزال تستطيع الوصول إلى حسابك، يمكنك حذفه من داخل تطبيق Meet Thai Jobs.",
+    "سياسة الخصوصية",
+    "النموذج العام غير متاح بعد.",
+    "جارٍ إرسال الطلب...",
+    "تم استلام طلبك. يلزم التحقق من الهوية قبل الحذف.",
+    "تعذر إرسال الطلب. يرجى المحاولة لاحقاً.",
+    "طلبات كثيرة جداً. يرجى المحاولة لاحقاً."
+  ],
+  hi: [
+    "भाषा",
+    "खाता हटाने का अनुरोध",
+    "आप अपना Meet Thai Jobs खाता और उससे जुड़ा व्यक्तिगत डेटा हटाने का अनुरोध कर सकते हैं।",
+    "अनुरोध भेजने से खाता तुरंत नहीं हटता। हटाने से पहले हमें आपकी पहचान सत्यापित करनी होगी।",
+    "खाता हटाने का अनुरोध",
+    "खाते का ईमेल पता",
+    "कारण (वैकल्पिक)",
+    "अनुरोध भेजें",
+    "यदि आप अभी भी खाते में लॉग इन कर सकते हैं, तो Meet Thai Jobs ऐप से खाता हटा सकते हैं।",
+    "गोपनीयता नीति",
+    "सार्वजनिक फ़ॉर्म अभी उपलब्ध नहीं है।",
+    "अनुरोध भेजा जा रहा है...",
+    "आपका अनुरोध प्राप्त हुआ। खाता हटाने से पहले पहचान सत्यापन आवश्यक है।",
+    "अनुरोध नहीं भेजा जा सका। कृपया बाद में प्रयास करें।",
+    "बहुत अधिक अनुरोध। कृपया बाद में प्रयास करें।"
+  ],
+  id: [
+    "Bahasa",
+    "Ajukan penghapusan akun",
+    "Anda dapat meminta penghapusan akun Meet Thai Jobs dan data pribadi terkait.",
+    "Mengirim permintaan tidak langsung menghapus akun. Kami harus memverifikasi identitas Anda sebelum penghapusan.",
+    "Permintaan penghapusan",
+    "Alamat email akun",
+    "Alasan (opsional)",
+    "Ajukan penghapusan",
+    "Jika masih dapat mengakses akun, Anda bisa menghapusnya melalui aplikasi Meet Thai Jobs.",
+    "Kebijakan Privasi",
+    "Formulir publik belum tersedia.",
+    "Mengirim permintaan...",
+    "Permintaan diterima. Verifikasi identitas diperlukan sebelum penghapusan.",
+    "Permintaan gagal dikirim. Silakan coba lagi nanti.",
+    "Terlalu banyak permintaan. Silakan coba lagi nanti."
+  ],
+  vi: [
+    "Ngôn ngữ",
+    "Yêu cầu xóa tài khoản",
+    "Bạn có thể yêu cầu xóa tài khoản Meet Thai Jobs và dữ liệu cá nhân liên quan.",
+    "Gửi yêu cầu không xóa tài khoản ngay lập tức. Chúng tôi phải xác minh danh tính trước khi xóa.",
+    "Yêu cầu xóa",
+    "Email của tài khoản",
+    "Lý do (không bắt buộc)",
+    "Gửi yêu cầu xóa",
+    "Nếu vẫn truy cập được tài khoản, bạn có thể xóa tài khoản trong ứng dụng Meet Thai Jobs.",
+    "Chính sách quyền riêng tư",
+    "Biểu mẫu công khai chưa khả dụng.",
+    "Đang gửi yêu cầu...",
+    "Đã nhận yêu cầu. Cần xác minh danh tính trước khi xóa.",
+    "Không thể gửi yêu cầu. Vui lòng thử lại sau.",
+    "Quá nhiều yêu cầu. Vui lòng thử lại sau."
+  ],
+  zh: [
+    "语言",
+    "申请删除账户",
+    "您可以申请删除 Meet Thai Jobs 账户及相关个人数据。",
+    "提交申请不会立即删除账户。删除前我们必须验证您的身份。",
+    "删除申请",
+    "账户电子邮箱",
+    "原因（选填）",
+    "提交删除申请",
+    "如果您仍可登录账户，可以在 Meet Thai Jobs 应用内删除账户。",
+    "隐私政策",
+    "公开申请表尚未开放。",
+    "正在提交申请...",
+    "已收到申请。删除前需要验证身份。",
+    "无法提交申请，请稍后重试。",
+    "申请过于频繁，请稍后重试。"
+  ],
+  ja: [
+    "言語",
+    "アカウント削除を申請",
+    "Meet Thai Jobs のアカウントと関連する個人データの削除を申請できます。",
+    "申請してもアカウントはすぐに削除されません。削除前に本人確認が必要です。",
+    "削除申請",
+    "アカウントのメールアドレス",
+    "理由（任意）",
+    "削除を申請",
+    "まだログインできる場合は、Meet Thai Jobs アプリ内でアカウントを削除できます。",
+    "プライバシーポリシー",
+    "公開申請フォームはまだ利用できません。",
+    "申請を送信中...",
+    "申請を受け付けました。削除前に本人確認が必要です。",
+    "申請を送信できませんでした。後でもう一度お試しください。",
+    "リクエストが多すぎます。後でもう一度お試しください。"
+  ],
+  ko: [
+    "언어",
+    "계정 삭제 요청",
+    "Meet Thai Jobs 계정과 관련 개인정보의 삭제를 요청할 수 있습니다.",
+    "요청을 제출해도 계정이 즉시 삭제되지는 않습니다. 삭제 전에 본인 확인이 필요합니다.",
+    "삭제 요청",
+    "계정 이메일 주소",
+    "사유 (선택 사항)",
+    "삭제 요청 제출",
+    "아직 계정에 로그인할 수 있다면 Meet Thai Jobs 앱에서 계정을 삭제할 수 있습니다.",
+    "개인정보 처리방침",
+    "공개 요청 양식은 아직 사용할 수 없습니다.",
+    "요청 전송 중...",
+    "요청이 접수되었습니다. 삭제 전에 본인 확인이 필요합니다.",
+    "요청을 전송하지 못했습니다. 나중에 다시 시도하세요.",
+    "요청이 너무 많습니다. 나중에 다시 시도하세요."
+  ]
+};
+
+const ids = [
+  "languageLabel",
+  "title",
+  "intro",
+  "notice",
+  "heading",
+  "emailLabel",
+  "reasonLabel",
+  "submitButton",
+  "alternative",
+  "privacyLink"
+];
+
+const languageSelect = document.getElementById("language");
+const form = document.getElementById("deletionForm");
+const button = document.getElementById("submitButton");
+const statusBox = document.getElementById("status");
+
+let currentLanguage = "en";
+let submitting = false;
+
+function translate(index) {
+  return translations[currentLanguage][index];
+}
+
+function setLanguage(lang) {
+  currentLanguage = Object.prototype.hasOwnProperty.call(
+    translations, lang
+  ) ? lang : "en";
+
+  languageSelect.value = currentLanguage;
+  document.documentElement.lang = currentLanguage;
+  document.documentElement.dir =
+    currentLanguage === "ar" ? "rtl" : "ltr";
+
+  const strings = translations[currentLanguage];
+
+  ids.forEach((id, index) => {
+    document.getElementById(id).textContent = strings[index];
+  });
+
+  document.getElementById("privacyLink").href =
+    "./privacy.html?lang=" +
+    encodeURIComponent(currentLanguage);
+
+  document.title = "Meet Thai Jobs – " + strings[1];
+
+  if (!submitting) {
+    button.disabled = !SUBMISSION_ENABLED;
+    statusBox.textContent =
+      SUBMISSION_ENABLED ? "" : strings[10];
+  }
+}
+
+languageSelect.addEventListener("change", () => {
+  setLanguage(languageSelect.value);
+});
+
+form.addEventListener("submit", async (event) => {
+  event.preventDefault();
+
+  if (!SUBMISSION_ENABLED || submitting) return;
+
+  const email = document.getElementById("email")
+    .value.trim().toLowerCase();
+
+  const reason = document.getElementById("reason")
+    .value.trim();
+
+  const website = document.getElementById("website").value;
+
+  if (!form.reportValidity()) return;
+
+  submitting = true;
+  button.disabled = true;
+  statusBox.textContent = translate(11);
+
+  try {
+    const response = await fetch(ENDPOINT, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        email: email,
+        reason: reason,
+        app_id: "meet_thai_jobs",
+        website: website
+      })
+    });
+
+    if (response.status === 202) {
+      statusBox.textContent = translate(12);
+      form.reset();
+    } else if (response.status === 429) {
+      statusBox.textContent = translate(14);
+    } else {
+      statusBox.textContent = translate(13);
+    }
+  } catch {
+    statusBox.textContent = translate(13);
+  } finally {
+    submitting = false;
+    button.disabled = !SUBMISSION_ENABLED;
+  }
+});
+
+const params = new URLSearchParams(window.location.search);
+const requestedLanguage = params.get("lang");
+
+const browserLanguage = (
+  navigator.language || "en"
+).split("-")[0].toLowerCase();
+
+setLanguage(requestedLanguage || browserLanguage);
+</script>
+</body>
+</html>
